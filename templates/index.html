@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Northgate AI Stock Predictor | Indian Equities</title>
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        /* ==========================================================
+           NORTHGATE TERMINAL - EMBEDDED RESILIENT DESIGN SYSTEM
+           Zero external CSS dependencies (No Tailwind CDN dependency)
+           ========================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-base: #070b14;
+            --bg-card: #0d1527;
+            --bg-card-hover: #121c33;
+            --bg-input: #080e1b;
+            --border-subtle: #17233d;
+            --border-hover: #26385d;
+            --accent-blue: #0284c7;
+            --accent-sky: #38bdf8;
+            --accent-green: #10b981;
+            --accent-emerald: #059669;
+            --accent-red: #ef4444;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-stack);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            background: rgba(13, 21, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        .brand-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-title {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #38bdf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Main Container */
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Control Form Toolbar */
+        .control-grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1.6fr 1.2fr 1.2fr 1.8fr;
+            gap: 16px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 1024px) {
+            .control-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            height: 42px;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-sky);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 0 20px;
+            height: 42px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+            width: 100%;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+            opacity: 0.95;
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        /* Metric Highlights Ribbon */
+        .stats-ribbon {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .stats-ribbon {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .text-green { color: #34d399 !important; }
+        .text-red { color: #f87171 !important; }
+        .text-blue { color: #38bdf8 !important; }
+
+        /* Northgate AI Signal Banner */
+        .signal-banner {
+            border-left: 6px solid #10b981;
+            display: grid;
+            grid-template-columns: 1.4fr 2fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .signal-banner {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .signal-action-badge {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #34d399;
+            line-height: 1.1;
+            margin: 6px 0;
+        }
+
+        .targets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .target-box {
+            background: #080d19;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .target-box-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .target-box-val {
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        /* Navigation Tabs */
+        .tab-bar {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 2px;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-button.active {
+            color: var(--accent-sky);
+            background: #111a30;
+            border-bottom: 2px solid var(--accent-sky);
+        }
+
+        .tab-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tab-panel.hidden {
+            display: none;
+        }
+
+        /* Forecast Projections Row */
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .forecast-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .forecast-box {
+            background: #0a1120;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .forecast-box-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .forecast-box-val {
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        /* Two Column Layout */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 800px) {
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Checklists & Lists */
+        .signal-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .signal-list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .signal-check {
+            color: #38bdf8;
+            font-size: 14px;
+        }
+
+        .pivots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .pivot-item {
+            background: #080d19;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* News Cards */
+        .news-item {
+            background: #09101f;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color 0.2s;
+        }
+
+        .news-item:hover {
+            border-color: var(--border-hover);
+        }
+
+        .news-headline {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            line-height: 1.35;
+        }
+
+        .news-headline:hover {
+            color: var(--accent-sky);
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .badge-sentiment {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .badge-bullish { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+        /* Loader */
+        .loader-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid rgba(56, 189, 248, 0.15);
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            background: #050810;
+            padding: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-container">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+            </div>
+            <div>
+                <div class="brand-title">NORTHGATE AI</div>
+                <div class="brand-subtitle">Indian Equities Forecasting & Quant Platform</div>
+            </div>
+        </div>
+
+        <div class="header-status">
+            <span class="status-badge">
+                <span class="pulse-dot"></span>
+                NSE / BSE Live Engine
+            </span>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">IST (UTC+5:30)</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main>
+
+        <!-- Search & Control Toolbar -->
+        <section class="card">
+            <div class="control-grid">
+                <div class="form-group">
+                    <label class="form-label">Preset Indian Stocks / Indices</label>
+                    <select id="presetSelect" class="form-control">
+                        <!-- Populated via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Or Custom Symbol</label>
+                    <input type="text" id="customInput" placeholder="e.g. TATAPOWER, SBICARD" class="form-control" style="text-transform: uppercase;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Lookback</label>
+                    <select id="periodSelect" class="form-control">
+                        <option value="3mo">3 Months</option>
+                        <option value="6mo">6 Months</option>
+                        <option value="1y" selected>1 Year</option>
+                        <option value="2y">2 Years</option>
+                        <option value="5y">5 Years</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Forecast Horizon</label>
+                    <select id="horizonSelect" class="form-control">
+                        <option value="1">1 Day</option>
+                        <option value="5" selected>5 Days (1W)</option>
+                        <option value="10">10 Days (2W)</option>
+                        <option value="20">20 Days (1M)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button id="runBtn" onclick="runAnalysis()" class="btn-predict">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                        <span>Generate AI Signal</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loader -->
+        <div id="loader" class="loader-overlay" style="display: none;">
+            <div class="spinner"></div>
+            <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Crunching quant indicators, running ML models & parsing news sentiment...</div>
+        </div>
+
+        <!-- Dashboard Body -->
+        <div id="dashboard" style="display: flex; flex-direction: column; gap: 20px;">
+
+            <!-- Stats Ribbon -->
+            <div class="stats-ribbon">
+                <div class="stat-card">
+                    <span class="stat-label">Asset</span>
+                    <div id="compName" class="stat-value" style="font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reliance Industries</div>
+                    <div id="compSymbol" class="stat-sub text-blue">RELIANCE.NS</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Current Price</span>
+                    <div id="currPrice" class="stat-value">₹1,338.00</div>
+                    <div id="priceChange" class="stat-sub text-green">+15.20 (+1.15%)</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Day Range</span>
+                    <div id="dayRange" class="stat-value" style="font-size: 16px;">₹1,347 / ₹1,333</div>
+                    <div class="stat-sub" style="color: var(--text-muted);">High / Low</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">52-Week Range</span>
+                    <div id="yearRange" class="stat-value" style="font-size: 16px;">₹1,611 / ₹1,152</div>
+                    <div class="stat-sub" style="color: var(--text-muted);">Channel Span</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Volume</span>
+                    <div id="currVol" class="stat-value" style="font-size: 16px;">5.57M</div>
+                    <div class="stat-sub" style="color: var(--text-muted);">Shares Traded</div>
+                </div>
+            </div>
+
+            <!-- Northgate Recommendation Card -->
+            <section class="card signal-banner" id="signalBanner">
+                <div>
+                    <span class="stat-label" style="color: var(--text-secondary);">Northgate AI Decision</span>
+                    <div id="recAction" class="signal-action-badge">STRONG BUY</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">
+                        Model Conviction: <b id="recConviction" style="color: #ffffff; font-size: 14px;">88%</b>
+                    </div>
+                </div>
+
+                <div class="targets-grid">
+                    <div class="target-box">
+                        <span class="target-box-label" style="color: #f87171;">Stop Loss</span>
+                        <div id="stopLoss" class="target-box-val text-red">₹1,305.00</div>
+                    </div>
+                    <div class="target-box">
+                        <span class="target-box-label" style="color: #34d399;">Target 1</span>
+                        <div id="target1" class="target-box-val text-green">₹1,385.00</div>
+                    </div>
+                    <div class="target-box">
+                        <span class="target-box-label" style="color: #6ee7b7;">Target 2</span>
+                        <div id="target2" class="target-box-val text-green">₹1,415.00</div>
+                    </div>
+                </div>
+
+                <div class="target-box" style="display: flex; flex-direction: column; justify-content: center;">
+                    <span class="target-box-label" style="color: var(--text-secondary);">Risk / Reward</span>
+                    <div id="rrRatio" class="target-box-val text-blue">1 : 2.4</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Asymmetric Alpha</div>
+                </div>
+            </section>
+
+            <!-- Navigation Tabs Bar -->
+            <div class="tab-bar">
+                <button onclick="switchTab('chart')" id="tabBtn-chart" class="tab-button active">
+                    📊 Price & AI Projection
+                </button>
+                <button onclick="switchTab('tech')" id="tabBtn-tech" class="tab-button">
+                    📈 Technical Indicators
+                </button>
+                <button onclick="switchTab('ml')" id="tabBtn-ml" class="tab-button">
+                    🤖 ML Model Diagnostics
+                </button>
+                <button onclick="switchTab('news')" id="tabBtn-news" class="tab-button">
+                    📰 News & Sentiment
+                </button>
+                <button onclick="switchTab('backtest')" id="tabBtn-backtest" class="tab-button">
+                    ⚙️ Strategy Backtesting
+                </button>
+            </div>
+
+            <!-- TAB 1: Main Chart & Forecast Corridor -->
+            <div id="tab-chart" class="tab-panel">
+                <div class="card" style="padding: 16px;">
+                    <div id="plotlyChart" style="width: 100%; height: 580px;"></div>
+                </div>
+
+                <div class="forecast-grid">
+                    <div class="forecast-box">
+                        <div class="forecast-box-label">Expected Price</div>
+                        <div id="fcPrice" class="forecast-box-val text-blue">₹1,375.00</div>
+                    </div>
+                    <div class="forecast-box">
+                        <div class="forecast-box-label">Predicted Return</div>
+                        <div id="fcReturn" class="forecast-box-val text-green">+2.88%</div>
+                    </div>
+                    <div class="forecast-box">
+                        <div class="forecast-box-label">Lower Confidence Bound</div>
+                        <div id="fcLower" class="forecast-box-val" style="color: var(--text-secondary);">₹1,340.00</div>
+                    </div>
+                    <div class="forecast-box">
+                        <div class="forecast-box-label">Upper Confidence Bound</div>
+                        <div id="fcUpper" class="forecast-box-val" style="color: var(--text-secondary);">₹1,410.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Technical Indicators -->
+            <div id="tab-tech" class="tab-panel hidden">
+                <div class="two-col-grid">
+                    <div class="card">
+                        <div class="form-label" style="margin-bottom: 8px;">Relative Strength Index (RSI 14)</div>
+                        <div id="rsiChart" style="width: 100%; height: 260px;"></div>
+                    </div>
+                    <div class="card">
+                        <div class="form-label" style="margin-bottom: 8px;">MACD Momentum Histogram</div>
+                        <div id="macdChart" style="width: 100%; height: 260px;"></div>
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="card">
+                        <div class="form-label" style="margin-bottom: 12px;">Active Indicator Triggers</div>
+                        <ul id="techSignalsList" class="signal-list">
+                            <!-- Populated via JS -->
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="form-label" style="margin-bottom: 12px;">Pivot Points & Key Levels</div>
+                        <div id="pivotsList" class="pivots-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: ML Diagnostics -->
+            <div id="tab-ml" class="tab-panel hidden">
+                <div class="forecast-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="text-align: center;">
+                        <span class="stat-label">Direction Probability</span>
+                        <div id="mlProb" style="font-size: 28px; font-weight: 900; margin-top: 6px;" class="text-blue">72.5% Bullish</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Time-series ensemble consensus</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <span class="stat-label">Out-of-Sample Accuracy</span>
+                        <div id="mlAcc" style="font-size: 28px; font-weight: 900; margin-top: 6px;" class="text-green">66.7%</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Walk-forward validation test</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <span class="stat-label">Trend Bias</span>
+                        <div id="mlTrend" style="font-size: 28px; font-weight: 900; margin-top: 6px; color: #a855f7;">BULLISH</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Horizon momentum projection</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="form-label" style="margin-bottom: 14px;">Key Predictive Drivers (Feature Importance)</div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>RSI Momentum (14)</span><b>32%</b>
+                            </div>
+                            <div style="background: #17233d; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #38bdf8; width: 32%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>Distance to 20-Day SMA</span><b>24%</b>
+                            </div>
+                            <div style="background: #17233d; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #818cf8; width: 24%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>MACD Histogram Divergence</span><b>18%</b>
+                            </div>
+                            <div style="background: #17233d; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #34d399; width: 18%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span>Volatility Ratio (ATR / Close)</span><b>14%</b>
+                            </div>
+                            <div style="background: #17233d; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #fbbf24; width: 14%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: News & Sentiment -->
+            <div id="tab-news" class="tab-panel hidden">
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                    <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+                        <span class="stat-label">Sentiment Index</span>
+                        <div id="sentLabel" style="font-size: 26px; font-weight: 800;" class="text-blue">Bullish</div>
+                        <div id="sentScore" style="font-size: 12px; color: var(--text-secondary);">Score: +0.40 (-1.0 to +1.0)</div>
+
+                        <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>🟢 Positive Articles:</span><b id="sentPos" class="text-green">4</b>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>⚪ Neutral Articles:</span><b id="sentNeu">2</b>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>🔴 Negative Articles:</span><b id="sentNeg" class="text-red">1</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="form-label" style="margin-bottom: 12px;">Latest Breaking Headlines</div>
+                        <div id="newsList" style="max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: Backtesting -->
+            <div id="tab-backtest" class="tab-panel hidden">
+                <div class="forecast-grid">
+                    <div class="stat-card" style="text-align: center;">
+                        <span class="stat-label">Strategy Return</span>
+                        <div id="btStrat" class="stat-value text-green">+34.8%</div>
+                    </div>
+                    <div class="stat-card" style="text-align: center;">
+                        <span class="stat-label">Buy & Hold Return</span>
+                        <div id="btBh" class="stat-value">+18.2%</div>
+                    </div>
+                    <div class="stat-card" style="text-align: center;">
+                        <span class="stat-label">Strategy Win Rate</span>
+                        <div id="btWin" class="stat-value text-blue">68.4%</div>
+                    </div>
+                    <div class="stat-card" style="text-align: center;">
+                        <span class="stat-label">Max Drawdown</span>
+                        <div id="btDd" class="stat-value text-red">-8.6%</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 16px;">
+                    <div class="form-label" style="margin-bottom: 8px;">Portfolio Equity Curve (Initial Capital: ₹100,000)</div>
+                    <div id="backtestChart" style="width: 100%; height: 420px;"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Northgate AI Stock Predictor &bull; Indian Equities Quantitative Intelligence &bull; For research & educational purposes.
+    </footer>
+
+    <!-- Frontend Interactive Logic -->
+    <script>
+        async function loadTickers() {
+            try {
+                const res = await fetch('/api/tickers');
+                const tickers = await res.json();
+                const select = document.getElementById('presetSelect');
+                select.innerHTML = '';
+                tickers.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.symbol;
+                    opt.textContent = `${t.symbol} - ${t.name}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Error loading tickers:", err);
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tabBtn-${tabId}`).classList.add('active');
+
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        async function runAnalysis() {
+            const customVal = document.getElementById('customInput').value.trim();
+            const ticker = customVal ? customVal : document.getElementById('presetSelect').value;
+            const period = document.getElementById('periodSelect').value;
+            const horizon = document.getElementById('horizonSelect').value;
+
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('dashboard').style.opacity = '0.35';
+
+            try {
+                const res = await fetch(`/api/analysis?ticker=${encodeURIComponent(ticker)}&period=${period}&horizon=${horizon}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+
+                renderDashboard(data);
+            } catch (err) {
+                alert("Failed to fetch analysis: " + err);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('dashboard').style.opacity = '1';
+            }
+        }
+
+        function renderDashboard(data) {
+            document.getElementById('compName').textContent = data.company_name;
+            document.getElementById('compSymbol').textContent = data.symbol;
+            document.getElementById('currPrice').textContent = `₹${data.current_price.toLocaleString('en-IN')}`;
+
+            const changeEl = document.getElementById('priceChange');
+            const sign = data.change >= 0 ? '+' : '';
+            changeEl.textContent = `${sign}${data.change} (${sign}${data.change_pct}%)`;
+            changeEl.className = data.change >= 0 ? 'stat-sub text-green' : 'stat-sub text-red';
+
+            document.getElementById('dayRange').textContent = `₹${data.day_high.toLocaleString()} / ₹${data.day_low.toLocaleString()}`;
+            document.getElementById('yearRange').textContent = `₹${data.year_high.toLocaleString()} / ₹${data.year_low.toLocaleString()}`;
+            document.getElementById('currVol').textContent = data.volume > 1e6 ? `${(data.volume / 1e6).toFixed(2)}M` : `${(data.volume / 1e3).toFixed(1)}K`;
+
+            // Recommendation
+            const rec = data.recommendation;
+            const actionEl = document.getElementById('recAction');
+            actionEl.textContent = rec.action;
+            actionEl.style.color = rec.action_color;
+            document.getElementById('signalBanner').style.borderLeftColor = rec.action_color;
+
+            document.getElementById('recConviction').textContent = `${rec.conviction_pct}%`;
+            document.getElementById('stopLoss').textContent = `₹${rec.stop_loss.toLocaleString('en-IN')}`;
+            document.getElementById('target1').textContent = `₹${rec.target_1.toLocaleString('en-IN')}`;
+            document.getElementById('target2').textContent = `₹${rec.target_2.toLocaleString('en-IN')}`;
+            document.getElementById('rrRatio').textContent = rec.risk_reward_ratio;
+
+            // Forecast Cards
+            const ml = data.ml_forecast;
+            document.getElementById('fcPrice').textContent = `₹${ml.forecast_price.toLocaleString('en-IN')}`;
+            document.getElementById('fcReturn').textContent = `${ml.predicted_return_pct >= 0 ? '+' : ''}${ml.predicted_return_pct}%`;
+            document.getElementById('fcLower').textContent = `₹${ml.lower_bound.toLocaleString('en-IN')}`;
+            document.getElementById('fcUpper').textContent = `₹${ml.upper_bound.toLocaleString('en-IN')}`;
+
+            // ML Tab
+            document.getElementById('mlProb').textContent = `${ml.bullish_probability}% Bullish`;
+            document.getElementById('mlAcc').textContent = `${ml.accuracy}%`;
+            document.getElementById('mlTrend').textContent = ml.trend;
+
+            // Render Charts
+            renderMainPlotlyChart(data);
+            renderTechCharts(data);
+            renderBacktestChart(data.backtest);
+
+            // Technical Signals
+            const sigList = document.getElementById('techSignalsList');
+            sigList.innerHTML = '';
+            rec.tech_signals.forEach(s => {
+                const li = document.createElement('li');
+                li.className = 'signal-list-item';
+                li.innerHTML = `<span class="signal-check">✔</span> <span>${s}</span>`;
+                sigList.appendChild(li);
+            });
+
+            // Pivots
+            const piv = data.indicators.pivots;
+            document.getElementById('pivotsList').innerHTML = `
+                <div class="pivot-item"><span>Resistance 2 (R2):</span><b class="text-red">₹${piv.r2}</b></div>
+                <div class="pivot-item"><span>Resistance 1 (R1):</span><b class="text-red">₹${piv.r1}</b></div>
+                <div class="pivot-item"><span>Central Pivot (P):</span><b style="color: #fbbf24;">₹${piv.pivot}</b></div>
+                <div class="pivot-item"><span>Support 1 (S1):</span><b class="text-green">₹${piv.s1}</b></div>
+                <div class="pivot-item"><span>Support 2 (S2):</span><b class="text-green">₹${piv.s2}</b></div>
+            `;
+
+            // News
+            const n = data.news;
+            document.getElementById('sentLabel').textContent = n.overall_label;
+            document.getElementById('sentScore').textContent = `Score: ${n.average_score >= 0 ? '+' : ''}${n.average_score} (-1.0 to +1.0)`;
+            document.getElementById('sentPos').textContent = n.bullish_count;
+            document.getElementById('sentNeu').textContent = n.neutral_count;
+            document.getElementById('sentNeg').textContent = n.bearish_count;
+
+            const nList = document.getElementById('newsList');
+            nList.innerHTML = '';
+            n.items.forEach(item => {
+                const badgeClass = item.label === 'Bullish' ? 'badge-bullish' : item.label === 'Bearish' ? 'badge-bearish' : 'badge-neutral';
+                const el = document.createElement('div');
+                el.className = 'news-item';
+                el.innerHTML = `
+                    <a href="${item.link}" target="_blank" class="news-headline">${item.title}</a>
+                    <div class="news-meta">
+                        <span>${item.source} &bull; ${item.published}</span>
+                        <span class="badge-sentiment ${badgeClass}">${item.label}</span>
+                    </div>
+                `;
+                nList.appendChild(el);
+            });
+
+            // Backtest
+            const bt = data.backtest;
+            document.getElementById('btStrat').textContent = `${bt.strategy_return_pct >= 0 ? '+' : ''}${bt.strategy_return_pct}%`;
+            document.getElementById('btBh').textContent = `${bt.benchmark_return_pct >= 0 ? '+' : ''}${bt.benchmark_return_pct}%`;
+            document.getElementById('btWin').textContent = `${bt.win_rate_pct}%`;
+            document.getElementById('btDd').textContent = `${bt.max_drawdown_pct}%`;
+        }
+
+        function renderMainPlotlyChart(data) {
+            const bars = data.bars;
+            const dates = bars.map(b => b.date);
+            const opens = bars.map(b => b.open);
+            const highs = bars.map(b => b.high);
+            const lows = bars.map(b => b.low);
+            const closes = bars.map(b => b.close);
+
+            const candleTrace = {
+                x: dates, open: opens, high: highs, low: lows, close: closes,
+                type: 'candlestick', name: 'Price OHLC',
+                increasing: { line: { color: '#10b981' } },
+                decreasing: { line: { color: '#ef4444' } },
+                yaxis: 'y1'
+            };
+
+            const sma20Trace = {
+                x: dates, y: data.indicators.sma20, type: 'scatter', mode: 'lines',
+                name: 'SMA 20', line: { color: '#f59e0b', width: 1.5 }, yaxis: 'y1'
+            };
+
+            const sma50Trace = {
+                x: dates, y: data.indicators.sma50, type: 'scatter', mode: 'lines',
+                name: 'SMA 50', line: { color: '#38bdf8', width: 1.5 }, yaxis: 'y1'
+            };
+
+            const lastDate = dates[dates.length - 1];
+            const d = new Date(lastDate);
+            d.setDate(d.getDate() + 7);
+            const futureDate = d.toISOString().split('T')[0];
+
+            const forecastTrace = {
+                x: [lastDate, futureDate],
+                y: [closes[closes.length - 1], data.ml_forecast.forecast_price],
+                type: 'scatter', mode: 'lines+markers',
+                name: 'AI Forecast',
+                line: { color: '#38bdf8', width: 3, dash: 'dot' },
+                marker: { size: [4, 8], color: '#38bdf8' },
+                yaxis: 'y1'
+            };
+
+            const coneTrace = {
+                x: [lastDate, futureDate, futureDate, lastDate],
+                y: [closes[closes.length - 1], data.ml_forecast.upper_bound, data.ml_forecast.lower_bound, closes[closes.length - 1]],
+                fill: 'toself',
+                fillcolor: 'rgba(56, 189, 248, 0.15)',
+                line: { color: 'transparent' },
+                name: 'Confidence Interval',
+                yaxis: 'y1'
+            };
+
+            const volColors = closes.map((c, i) => c >= opens[i] ? '#10b981' : '#ef4444');
+            const volTrace = {
+                x: dates, y: bars.map(b => b.volume),
+                type: 'bar', name: 'Volume',
+                marker: { color: volColors, opacity: 0.65 },
+                yaxis: 'y2'
+            };
+
+            const layout = {
+                paper_bgcolor: '#0d1527',
+                plot_bgcolor: '#0d1527',
+                font: { color: '#94a3b8', family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif' },
+                margin: { l: 50, r: 25, t: 30, b: 25 },
+                xaxis: { rangeslider: { visible: false }, gridcolor: '#17233d' },
+                yaxis: { domain: [0.25, 1], title: 'Price (₹)', gridcolor: '#17233d' },
+                yaxis2: { domain: [0, 0.2], title: 'Volume', showgrid: false },
+                legend: { orientation: 'h', y: 1.05, x: 0.5, xanchor: 'center' }
+            };
+
+            Plotly.newPlot('plotlyChart', [candleTrace, sma20Trace, sma50Trace, coneTrace, forecastTrace, volTrace], layout, { responsive: true, displayModeBar: false });
+        }
+
+        function renderTechCharts(data) {
+            const dates = data.bars.map(b => b.date);
+
+            // RSI
+            const rsiTrace = {
+                x: dates, y: data.indicators.rsi14, type: 'scatter', mode: 'lines',
+                line: { color: '#c084fc', width: 2 }, name: 'RSI 14'
+            };
+            const rsiLayout = {
+                paper_bgcolor: '#0d1527', plot_bgcolor: '#0d1527', font: { color: '#94a3b8' },
+                margin: { l: 40, r: 20, t: 15, b: 20 },
+                xaxis: { gridcolor: '#17233d' },
+                yaxis: { range: [0, 100], gridcolor: '#17233d' },
+                shapes: [
+                    { type: 'line', y0: 70, y1: 70, x0: dates[0], x1: dates[dates.length-1], line: { color: '#ef4444', dash: 'dash', width: 1 } },
+                    { type: 'line', y0: 30, y1: 30, x0: dates[0], x1: dates[dates.length-1], line: { color: '#10b981', dash: 'dash', width: 1 } }
+                ]
+            };
+            Plotly.newPlot('rsiChart', [rsiTrace], rsiLayout, { responsive: true, displayModeBar: false });
+
+            // MACD
+            const macdTrace = { x: dates, y: data.indicators.macd, type: 'scatter', mode: 'lines', name: 'MACD', line: { color: '#38bdf8', width: 1.5 } };
+            const sigTrace = { x: dates, y: data.indicators.macd_signal, type: 'scatter', mode: 'lines', name: 'Signal', line: { color: '#f59e0b', width: 1.5 } };
+            const histColors = data.indicators.macd_hist.map(v => v >= 0 ? '#10b981' : '#ef4444');
+            const histTrace = { x: dates, y: data.indicators.macd_hist, type: 'bar', name: 'Histogram', marker: { color: histColors } };
+
+            const macdLayout = {
+                paper_bgcolor: '#0d1527', plot_bgcolor: '#0d1527', font: { color: '#94a3b8' },
+                margin: { l: 40, r: 20, t: 15, b: 20 },
+                xaxis: { gridcolor: '#17233d' },
+                yaxis: { gridcolor: '#17233d' },
+                legend: { orientation: 'h', y: 1.1 }
+            };
+            Plotly.newPlot('macdChart', [macdTrace, sigTrace, histTrace], macdLayout, { responsive: true, displayModeBar: false });
+        }
+
+        function renderBacktestChart(bt) {
+            const stratTrace = {
+                x: bt.dates, y: bt.strategy_equity, type: 'scatter', mode: 'lines',
+                name: 'Northgate AI Strategy', line: { color: '#10b981', width: 2.5 }
+            };
+            const bhTrace = {
+                x: bt.dates, y: bt.benchmark_equity, type: 'scatter', mode: 'lines',
+                name: 'Buy & Hold Benchmark', line: { color: '#94a3b8', width: 1.5, dash: 'dash' }
+            };
+            const layout = {
+                paper_bgcolor: '#0d1527',
+                plot_bgcolor: '#0d1527',
+                font: { color: '#94a3b8' },
+                margin: { l: 55, r: 25, t: 20, b: 25 },
+                xaxis: { gridcolor: '#17233d' },
+                yaxis: { title: 'Portfolio Value (₹)', gridcolor: '#17233d' },
+                legend: { orientation: 'h', y: 1.05, x: 0.5, xanchor: 'center' }
+            };
+            Plotly.newPlot('backtestChart', [stratTrace, bhTrace], layout, { responsive: true, displayModeBar: false });
+        }
+
+        window.onload = async () => {
+            await loadTickers();
+            runAnalysis();
+        };
+    </script>
+</body>
+</html>

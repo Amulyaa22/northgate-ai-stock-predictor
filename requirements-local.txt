@@ -1,0 +1,15 @@
+# Local Development & Full Machine Learning Stack (Streamlit + XGBoost)
+streamlit>=1.35.0
+yfinance>=0.2.40
+pandas>=2.2.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+plotly>=5.22.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+feedparser>=6.0.10
+ta>=0.11.0
+fastapi>=0.110.0
+uvicorn>=0.30.0
+
